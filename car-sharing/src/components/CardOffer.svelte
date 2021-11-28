@@ -3,9 +3,12 @@
     export let carInfo
     let showTab = false
     
+    window.addEventListener("resize",function () {
+        console.log(window.innerWidth)
+    })
 </script>
 
-<div class="card-margin border-2 rounded border-gray-400 flex tile mt-3 h-60 box-border items-center">
+<div class=" card-margin border-2 rounded border-gray-400 flex tile mt-3 h-60 box-border items-center">
     <div >
         <img class="flex rounded-sm ml-1" style="width: 300px; height: 230px;"  src="/img/{carInfo.image_source}" alt="Zdjęcie samochodu">
     </div>
@@ -56,5 +59,23 @@
 }
 .transform-left{
     transform: translate(-50%,0%);
+}
+
+@media only screen and (max-width:1400px){
+    .tile{
+        width: 45%;
+    }
+    .card-margin{
+        margin-left: 3%;
+    }
+}
+
+@media only screen and (max-width:1068px){
+    .tile{
+        width: 90%;
+    }
+    .card-margin{
+        margin-left: 5%;
+    }
 }
 </style>
