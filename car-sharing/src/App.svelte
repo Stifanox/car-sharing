@@ -9,7 +9,7 @@
 	import Register from "./views/Register.svelte";
 	import Tailwindcss from "./Tailwindcss.svelte";
 	import ChangePassword from "./views/ChangePassword.svelte";
-	import ManageReservations from "./ManageReservations.svelte";
+	import ManageReservations from "./views/ManageReservations.svelte";
 	import AddToOffer from "./views/AddToOffer.svelte";
 	import MakeReservation from "./views/MakeReservation.svelte";
 	import AccessDenied from "./views/AccessDenied.svelte";

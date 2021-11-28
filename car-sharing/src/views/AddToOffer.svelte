@@ -1,7 +1,7 @@
 <script>
 import Header from "./Header.svelte";
 
-if(sessionStorage.getItem("privilege") != "1" || sessionStorage.getItem("privilege") != "3"){
+if(sessionStorage.getItem("privilege") != "1" && sessionStorage.getItem("privilege") != "3"){
     location = "/#/accessDenied"
 }
 
