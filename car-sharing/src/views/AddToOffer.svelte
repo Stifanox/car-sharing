@@ -72,7 +72,7 @@ function handleSubmit(e){
                     <option value={body.id}>{body.body_name}</option>
                 {/each}
             </select><br>
-            <button type="submit" class="mt-10">Dodaj nową ofertę samochodu</button>
+            <button type="submit" class="mt-10 mb-5">Dodaj nową ofertę samochodu</button>
         </form>
     </div>
     {/await}
