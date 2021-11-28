@@ -2,10 +2,11 @@
 
     export let carInfo
     let showTab = false
-    
-    window.addEventListener("resize",function () {
-        console.log(window.innerWidth)
+        window.addEventListener("resize",function () {
+            console.log("CALL")
+        document.querySelector(".background-gray-screen").style = `height: ${document.body.scrollHeight}px;`
     })
+   
 </script>
 
 <div class=" card-margin border-2 rounded border-gray-400 flex tile mt-3 h-60 box-border items-center">
@@ -22,9 +23,9 @@
 </div>
 
 {#if showTab}
-<div on:click={()=>{showTab=false}} class="w-full h-full absolute bg-opacity-75 bg-gray-300 top-0 left-0"></div>
+<div on:click={()=>{showTab=false}} class="w-screen h-screen absolute bg-opacity-75 bg-gray-300 top-0 left-0 background-gray-screen "></div>
 
-<div class="absolute rounded-md bg-white m-auto h-3/4 w-3/5 z-30 flex items-center left-1/2 transform-left">
+<div class="absolute rounded-md bg-white m-auto h-3/4 w-3/5 z-30 flex items-center left-1/2 transform-left top-10">
 
     <img on:click={()=>{showTab=false}} src="/img/close.png" alt="" class="absolute top-0 right-0 m-1.5" style="width: 20px; cursor:pointer; height: 20px;">
 <div>
