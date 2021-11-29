@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Czas generowania: 28 Lis 2021, 23:24
+-- Czas generowania: 29 Lis 2021, 11:50
 -- Wersja serwera: 10.4.17-MariaDB
 -- Wersja PHP: 8.0.2
 
@@ -33,7 +33,7 @@ CREATE TABLE `archives_reservations` (
   `offer_id` int(11) NOT NULL,
   `date_start` date NOT NULL,
   `date_end` date DEFAULT NULL,
-  `status_id` tinyint(4) DEFAULT NULL
+  `status_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
@@ -93,9 +93,9 @@ INSERT INTO `car_brands` (`id`, `brand`) VALUES
 
 CREATE TABLE `offer` (
   `id` int(11) NOT NULL,
-  `brand_id` int(4) DEFAULT NULL,
+  `brand_id` int(11) DEFAULT NULL,
   `horsepower` smallint(6) DEFAULT NULL,
-  `price_id` int(6) DEFAULT NULL,
+  `price_id` int(11) DEFAULT NULL,
   `description` varchar(255) DEFAULT NULL,
   `fuel_per_100_km` float DEFAULT NULL,
   `how_long_to_100` float DEFAULT NULL,
@@ -109,9 +109,9 @@ CREATE TABLE `offer` (
 --
 
 INSERT INTO `offer` (`id`, `brand_id`, `horsepower`, `price_id`, `description`, `fuel_per_100_km`, `how_long_to_100`, `image_source`, `model`, `body_id`) VALUES
-(3, 1, 12, 1, 'Skurwysyny się patrzą', 8, 11.2, 'ford_focus.jpg', 'Focus', 1),
+(3, 1, 12, 1, 'Stary focus w twojej okolicy', 8, 11.2, 'ford_focus.jpg', 'Focus', 1),
 (4, 2, 2, 1, 'Szybko', 5, 10.3, 'honda_civic.jpg', 'Civic', 1),
-(5, 3, 4, 1, 'Kurwa', 8, 4.3, 'mercedes_benc_amg.jpg', 'AMG', 1),
+(5, 3, 4, 1, 'AAAAAAAAAAAAAA', 8, 4.3, 'mercedes_benc_amg.jpg', 'AMG', 1),
 (6, 4, 125, 1, 'Wrum', 1, 20, 'audi_a3.jpg', 'A3', 1),
 (7, 2, 300, 1, 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque nec sem imperdiet, tempus libero vel, cursus mi. Duis eget velit vitae lacus interdum varius at a lectus. Phasellus vitae diam vitae quam varius efficitur ac ut orci. Mauris arcu neque,', 16, 3.6, 'honda_accord.jpg', 'Accords', 1),
 (8, 5, 90, 2, 'Ale fura', 12, 21, 'volkswagen_golf_IV.jpg', 'Golf IV', 1);
@@ -147,7 +147,7 @@ CREATE TABLE `reservations` (
   `offer_id` int(11) DEFAULT NULL,
   `date_start` date DEFAULT NULL,
   `date_end` date DEFAULT NULL,
-  `status_id` tinyint(4) DEFAULT NULL
+  `status_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
@@ -218,7 +218,7 @@ CREATE TABLE `users` (
   `username` varchar(25) DEFAULT NULL,
   `email` varchar(40) DEFAULT NULL,
   `password` varchar(100) DEFAULT NULL,
-  `privilege_id` tinyint(4) DEFAULT NULL
+  `privilege_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
@@ -242,7 +242,8 @@ INSERT INTO `users` (`id`, `username`, `email`, `password`, `privilege_id`) VALU
 -- Indeksy dla tabeli `archives_reservations`
 --
 ALTER TABLE `archives_reservations`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `user_id` (`user_id`,`offer_id`,`status_id`);
 
 --
 -- Indeksy dla tabeli `body_types`
@@ -260,7 +261,10 @@ ALTER TABLE `car_brands`
 -- Indeksy dla tabeli `offer`
 --
 ALTER TABLE `offer`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `brand_id` (`brand_id`,`price_id`,`body_id`),
+  ADD KEY `price_id` (`price_id`),
+  ADD KEY `body_id` (`body_id`);
 
 --
 -- Indeksy dla tabeli `prices`
@@ -272,7 +276,10 @@ ALTER TABLE `prices`
 -- Indeksy dla tabeli `reservations`
 --
 ALTER TABLE `reservations`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `user_id` (`user_id`,`offer_id`,`status_id`),
+  ADD KEY `status_id` (`status_id`),
+  ADD KEY `offer_id` (`offer_id`);
 
 --
 -- Indeksy dla tabeli `roles`
@@ -290,7 +297,8 @@ ALTER TABLE `status`
 -- Indeksy dla tabeli `users`
 --
 ALTER TABLE `users`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `privilege_id` (`privilege_id`);
 
 --
 -- AUTO_INCREMENT dla zrzuconych tabel
@@ -349,6 +357,32 @@ ALTER TABLE `status`
 --
 ALTER TABLE `users`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+
+--
+-- Ograniczenia dla zrzutów tabel
+--
+
+--
+-- Ograniczenia dla tabeli `offer`
+--
+ALTER TABLE `offer`
+  ADD CONSTRAINT `offer_ibfk_1` FOREIGN KEY (`brand_id`) REFERENCES `car_brands` (`id`),
+  ADD CONSTRAINT `offer_ibfk_2` FOREIGN KEY (`price_id`) REFERENCES `prices` (`id`),
+  ADD CONSTRAINT `offer_ibfk_3` FOREIGN KEY (`body_id`) REFERENCES `body_types` (`id`);
+
+--
+-- Ograniczenia dla tabeli `reservations`
+--
+ALTER TABLE `reservations`
+  ADD CONSTRAINT `reservations_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
+  ADD CONSTRAINT `reservations_ibfk_2` FOREIGN KEY (`status_id`) REFERENCES `status` (`id`),
+  ADD CONSTRAINT `reservations_ibfk_3` FOREIGN KEY (`offer_id`) REFERENCES `offer` (`id`);
+
+--
+-- Ograniczenia dla tabeli `users`
+--
+ALTER TABLE `users`
+  ADD CONSTRAINT `users_ibfk_1` FOREIGN KEY (`privilege_id`) REFERENCES `roles` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
