@@ -94,12 +94,12 @@ class Database{
     }
     public function getCarStatusOffer(int $id)
     {
-        return $this -> conn -> query("SELECT s.status_name FROM reservations r INNER JOIN `status` s ON s.id=r.status_id WHERE r.offer_id = $id");
+        return $this -> conn -> query("SELECT s.status_name, r.user_id FROM reservations r INNER JOIN `status` s ON s.id=r.status_id WHERE r.offer_id = $id");
     }
-    public function makeReservation(int $user_id,int $offer_id, string $date_start,string $date_end,int $status_id)
+    public function makeReservation(int $user_id,int $offer_id, string $date_start,string $date_end,int $status_id,int $acception_id)
     {
         if($this -> escapeChars([$date_start,$date_end])){
-            return $this -> conn ->query("INSERT INTO reservations(`user_id`,offer_id,date_start,date_end,status_id) VALUES ($user_id,$offer_id,'$date_start','$date_end',$status_id)");
+            return $this -> conn ->query("INSERT INTO reservations(`user_id`,offer_id,date_start,date_end,status_id,acception_id) VALUES ($user_id,$offer_id,'$date_start','$date_end',$status_id, $acception_id)");
         }
         else{
             return null;

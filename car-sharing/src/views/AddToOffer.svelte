@@ -68,7 +68,6 @@ function handleSubmit(e){
             <label for="body_name">Typ nadwozia</label>
             <select name="body_id" id="">
                 {#each data.bodies as body}
-                {console.log(body.id)}
                     <option value={body.id}>{body.body_name}</option>
                 {/each}
             </select><br>

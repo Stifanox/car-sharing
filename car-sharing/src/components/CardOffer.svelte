@@ -3,7 +3,6 @@
     export let carInfo
     let showTab = false
         window.addEventListener("resize",function () {
-            console.log("CALL")
         document.querySelector(".background-gray-screen").style = `height: ${document.body.scrollHeight}px;`
     })
    

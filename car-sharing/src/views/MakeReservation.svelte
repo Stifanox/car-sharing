@@ -36,11 +36,22 @@ import Header from "./Header.svelte";
         formDataReservation.append("date_start",event.detail.startDate)
         formDataReservation.append("date_end",event.detail.endDate)
         formDataReservation.append("status_id",3)
+        formDataReservation.append("acception_id",1)
+        
         fetch(`${link}${actionMakeReservation}`,{
             method:"POST",
             body:formDataReservation
         }).then(res => res.json())
-        .then(res => console.log(res.success))
+        .then(res => {})
+    }
+
+    function canMakeAnotherReservation(arrayToFindUser){
+        //Jeżeli znaleziono usera zwraca true aby przycisk został wyłączony
+        const user = arrayToFindUser.find(el =>{ 
+            return el.user_id == sessionStorage.getItem("id")
+        })
+        if(user) return true
+        else return false
     }
 </script>
 
@@ -59,14 +70,13 @@ import Header from "./Header.svelte";
             {:then carStatus} 
                 {#if carStatus.length==0}
                     Status: dostępny
-                    <ReservationForm on:dates={doReservation} {getFormattedDate} {date}/>
+                    <ReservationForm on:dates={doReservation} {getFormattedDate} {date} doesMadeReservation={canMakeAnotherReservation(carStatus)}/>
                 {:else if carStatus[0].status_name=="not_available"}
                     Status: niedostępny
                 {:else if carStatus[0].status_name=="waiting"}
-                    Status: oczekujący
-                    <ReservationForm on:dates={doReservation} {getFormattedDate} {date}/>
-                {:else if carStatus[0].status_name=="accepted"}
-                Status: niedostępny
+                    Status: oczekujący <br>
+                    Ilość osób oczekujących: {carStatus.length}
+                    <ReservationForm on:dates={doReservation} {getFormattedDate} {date} doesMadeReservation={canMakeAnotherReservation(carStatus)} />
                 {/if}
             {/await}
         </div>

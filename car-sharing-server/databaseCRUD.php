@@ -76,7 +76,8 @@ switch ($action) {
         $date_start = $_POST["date_start"];
         $date_end = $_POST["date_end"];
         $status_id = $_POST["status_id"];
-        $result = $database -> makeReservation((int)$user_id,(int)$offer_id,$date_start,$date_end,(int)$status_id);
+        $acception_id = $_POST["acception_id"];
+        $result = $database -> makeReservation((int)$user_id,(int)$offer_id,$date_start,$date_end,(int)$status_id,(int)$acception_id);
         if($result){
             $database -> success("$user_id");
         }else{
