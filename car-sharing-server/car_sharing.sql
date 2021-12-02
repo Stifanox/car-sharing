@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Czas generowania: 29 Lis 2021, 11:50
+-- Czas generowania: 02 Gru 2021, 23:29
 -- Wersja serwera: 10.4.17-MariaDB
 -- Wersja PHP: 8.0.2
 
@@ -24,6 +24,26 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
+-- Struktura tabeli dla tabeli `acception`
+--
+
+CREATE TABLE `acception` (
+  `id` int(11) NOT NULL,
+  `status` varchar(25) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Zrzut danych tabeli `acception`
+--
+
+INSERT INTO `acception` (`id`, `status`) VALUES
+(1, 'waiting'),
+(2, 'accepted'),
+(3, 'rejected');
+
+-- --------------------------------------------------------
+
+--
 -- Struktura tabeli dla tabeli `archives_reservations`
 --
 
@@ -33,17 +53,18 @@ CREATE TABLE `archives_reservations` (
   `offer_id` int(11) NOT NULL,
   `date_start` date NOT NULL,
   `date_end` date DEFAULT NULL,
-  `status_id` int(11) DEFAULT NULL
+  `status_id` int(11) DEFAULT NULL,
+  `acception_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Zrzut danych tabeli `archives_reservations`
 --
 
-INSERT INTO `archives_reservations` (`id`, `user_id`, `offer_id`, `date_start`, `date_end`, `status_id`) VALUES
-(3, 14, 3, '2021-11-28', '2021-11-30', 4),
-(4, 0, 3, '2021-11-28', '2021-11-29', 4),
-(5, 0, 3, '2021-11-28', '2021-11-29', 4);
+INSERT INTO `archives_reservations` (`id`, `user_id`, `offer_id`, `date_start`, `date_end`, `status_id`, `acception_id`) VALUES
+(3, 14, 3, '2021-11-28', '2021-11-30', 4, NULL),
+(4, 0, 3, '2021-11-28', '2021-11-29', 4, NULL),
+(5, 0, 3, '2021-11-28', '2021-11-29', 4, NULL);
 
 -- --------------------------------------------------------
 
@@ -147,21 +168,23 @@ CREATE TABLE `reservations` (
   `offer_id` int(11) DEFAULT NULL,
   `date_start` date DEFAULT NULL,
   `date_end` date DEFAULT NULL,
-  `status_id` int(11) DEFAULT NULL
+  `status_id` int(11) DEFAULT NULL,
+  `acception_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Zrzut danych tabeli `reservations`
 --
 
-INSERT INTO `reservations` (`id`, `user_id`, `offer_id`, `date_start`, `date_end`, `status_id`) VALUES
-(5, 14, 3, '2021-11-28', '2021-11-29', 3);
+INSERT INTO `reservations` (`id`, `user_id`, `offer_id`, `date_start`, `date_end`, `status_id`, `acception_id`) VALUES
+(5, 14, 3, '2021-11-28', '2021-11-29', 3, NULL),
+(6, 16, 3, '2021-12-02', '2021-12-03', 3, 1);
 
 --
 -- Wyzwalacze `reservations`
 --
 DELIMITER $$
-CREATE TRIGGER `archive_reservations` BEFORE DELETE ON `reservations` FOR EACH ROW INSERT INTO archives_reservations(user_id,offer_id,date_start,date_end,status_id) VALUES (OLD.user_id,OLD.offer_id,OLD.date_start,OLD.date_end,OLD.status_id)
+CREATE TRIGGER `archive_reservations` BEFORE DELETE ON `reservations` FOR EACH ROW INSERT INTO archives_reservations(user_id,offer_id,date_start,date_end,status_id,acception_id) VALUES (OLD.user_id,OLD.offer_id,OLD.date_start,OLD.date_end,OLD.status_id,OLD.acception_id)
 $$
 DELIMITER ;
 
@@ -203,9 +226,7 @@ CREATE TABLE `status` (
 INSERT INTO `status` (`id`, `status_name`) VALUES
 (1, 'available'),
 (2, 'not_available'),
-(3, 'waiting'),
-(4, 'archive'),
-(7, 'accepted');
+(3, 'waiting');
 
 -- --------------------------------------------------------
 
@@ -239,11 +260,18 @@ INSERT INTO `users` (`id`, `username`, `email`, `password`, `privilege_id`) VALU
 --
 
 --
+-- Indeksy dla tabeli `acception`
+--
+ALTER TABLE `acception`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indeksy dla tabeli `archives_reservations`
 --
 ALTER TABLE `archives_reservations`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `user_id` (`user_id`,`offer_id`,`status_id`);
+  ADD KEY `user_id` (`user_id`,`offer_id`,`status_id`),
+  ADD KEY `acception_id` (`acception_id`);
 
 --
 -- Indeksy dla tabeli `body_types`
@@ -305,6 +333,12 @@ ALTER TABLE `users`
 --
 
 --
+-- AUTO_INCREMENT dla tabeli `acception`
+--
+ALTER TABLE `acception`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
 -- AUTO_INCREMENT dla tabeli `archives_reservations`
 --
 ALTER TABLE `archives_reservations`
@@ -338,7 +372,7 @@ ALTER TABLE `prices`
 -- AUTO_INCREMENT dla tabeli `reservations`
 --
 ALTER TABLE `reservations`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT dla tabeli `roles`
@@ -361,6 +395,12 @@ ALTER TABLE `users`
 --
 -- Ograniczenia dla zrzutów tabel
 --
+
+--
+-- Ograniczenia dla tabeli `archives_reservations`
+--
+ALTER TABLE `archives_reservations`
+  ADD CONSTRAINT `archives_reservations_ibfk_1` FOREIGN KEY (`acception_id`) REFERENCES `acception` (`id`);
 
 --
 -- Ograniczenia dla tabeli `offer`
