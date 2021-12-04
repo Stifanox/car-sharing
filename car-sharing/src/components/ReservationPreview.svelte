@@ -69,7 +69,7 @@ function returnCar() {
     .then(res => res.json())
     .then(res => {
         if(acception_status == "detencion") removeItem(id,"detencion")
-        else removeItem(id)
+        else removeItem(id,"returned")
     })
 }
 
