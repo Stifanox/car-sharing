@@ -88,9 +88,10 @@ function changeDateOfReservation(e) {
 }
 
 function doesDateStart() {
-    const startDate = new Date(dateStart)
-    const dateNow = Date.now().valueOf()
-    return startDate < dateNow
+    const startDate = new Date(`${dateStart} 00:00:00`)
+    const dateNow = Date.now()
+    console.log(startDate.valueOf() < dateNow , startDate.valueOf(),dateNow)
+    return startDate.valueOf() < dateNow
 }
 
 function getToday() {
@@ -130,7 +131,7 @@ function getToday() {
         {:else if status_name=="not_available" && (acception_status=="accepted"||acception_status=="detencion" )}
         
             {#if doesDateStart()}
-                <div class="w-15 h-15 a">
+                <div class="w-15 h-15">
                     <QRCode value={`${id}-${brand}-${model}`} />
                 </div>
             {/if}
