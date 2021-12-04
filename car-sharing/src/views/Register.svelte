@@ -1,7 +1,7 @@
 
 
 <script>
-import Header from "./Header.svelte";
+import Header from "../components/Header.svelte";
 const link = "http://localhost/car-sharing/register.php"
 let disableButton = false
 let problemOccurs = false

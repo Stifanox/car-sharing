@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Czas generowania: 02 Gru 2021, 23:29
+-- Czas generowania: 04 Gru 2021, 23:40
 -- Wersja serwera: 10.4.17-MariaDB
 -- Wersja PHP: 8.0.2
 
@@ -29,17 +29,20 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `acception` (
   `id` int(11) NOT NULL,
-  `status` varchar(25) DEFAULT NULL
+  `acception_status` varchar(25) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Zrzut danych tabeli `acception`
 --
 
-INSERT INTO `acception` (`id`, `status`) VALUES
+INSERT INTO `acception` (`id`, `acception_status`) VALUES
 (1, 'waiting'),
 (2, 'accepted'),
-(3, 'rejected');
+(3, 'rejected'),
+(4, 'canceled'),
+(5, 'returned'),
+(6, 'detencion');
 
 -- --------------------------------------------------------
 
@@ -54,17 +57,53 @@ CREATE TABLE `archives_reservations` (
   `date_start` date NOT NULL,
   `date_end` date DEFAULT NULL,
   `status_id` int(11) DEFAULT NULL,
-  `acception_id` int(11) DEFAULT NULL
+  `acception_id` int(11) DEFAULT NULL,
+  `days_until_detencion` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Zrzut danych tabeli `archives_reservations`
 --
 
-INSERT INTO `archives_reservations` (`id`, `user_id`, `offer_id`, `date_start`, `date_end`, `status_id`, `acception_id`) VALUES
-(3, 14, 3, '2021-11-28', '2021-11-30', 4, NULL),
-(4, 0, 3, '2021-11-28', '2021-11-29', 4, NULL),
-(5, 0, 3, '2021-11-28', '2021-11-29', 4, NULL);
+INSERT INTO `archives_reservations` (`id`, `user_id`, `offer_id`, `date_start`, `date_end`, `status_id`, `acception_id`, `days_until_detencion`) VALUES
+(3, 14, 3, '2021-11-28', '2021-11-30', 4, 2, 1),
+(6, 14, 7, '2021-12-03', '2021-12-03', 4, 3, 1),
+(8, 14, 3, '2021-11-28', '2021-11-29', 4, 4, 1),
+(10, 14, 3, '2021-12-04', '2021-12-04', 4, 4, 1),
+(11, 14, 3, '2021-12-04', '2021-12-04', 4, 2, 1),
+(12, 14, 3, '2021-12-04', '2021-12-04', 4, 2, 1),
+(13, 14, 3, '2021-12-04', '2021-12-04', 4, 2, 1),
+(14, 14, 8, '2021-12-04', '2021-12-04', 4, 2, 1),
+(15, 16, 3, '2021-12-02', '2021-12-03', 4, 3, 1),
+(16, 20, 3, '2021-12-04', '2021-12-04', 4, 3, 1),
+(17, 14, 3, '2021-12-04', '2021-12-04', 4, 1, 1),
+(18, 20, 3, '2021-12-04', '2021-12-04', 4, 3, 1),
+(19, 14, 3, '2021-12-04', '2021-12-04', 4, 3, 1),
+(20, 16, 3, '2021-12-04', '2021-12-04', 4, 3, 1),
+(21, 14, 3, '2021-12-04', '2021-12-04', 4, 3, 1),
+(22, 16, 3, '2021-12-04', '2021-12-04', 4, 3, 1),
+(23, 20, 3, '2021-12-04', '2021-12-04', 4, 3, 1),
+(24, 14, 3, '2021-12-04', '2021-12-04', 4, 3, 1),
+(25, 16, 3, '2021-12-04', '2021-12-04', 4, 2, 1),
+(26, 16, 3, '2021-12-04', '2021-12-04', 4, 3, 1),
+(27, 14, 3, '2021-12-04', '2021-12-04', 4, 5, 1),
+(28, 14, 4, '2021-12-04', '2021-12-04', 4, 5, 1),
+(29, 20, 5, '2021-12-04', '2021-12-04', 4, 4, 1),
+(30, 20, 5, '2021-12-04', '2021-12-04', 4, 1, 1),
+(33, 20, 5, '2021-12-04', '2021-12-04', 4, 4, 1),
+(34, 20, 5, '2021-12-04', '2021-12-03', 4, 4, -1),
+(35, 16, 4, '2021-12-04', '2021-12-07', 4, 4, 3),
+(36, 20, 5, '2021-12-04', '2021-12-04', 4, 4, 0),
+(37, 20, 5, '2021-12-04', '2021-12-04', 4, 4, 0),
+(38, 20, 5, '2021-12-04', '2021-12-04', 4, 4, 0),
+(39, 20, 5, '2021-12-04', '2021-12-04', 4, 4, 0),
+(40, 20, 5, '2021-12-04', '2021-12-04', 4, 4, 0),
+(41, 20, 5, '2021-12-04', '2021-12-04', 4, 4, 0),
+(42, 14, 3, '2021-12-04', '2021-12-02', 4, 5, -2),
+(43, 14, 3, '2021-12-04', '2021-12-03', 4, 5, -1),
+(44, 14, 3, '2021-12-04', '2021-12-02', 4, 5, -2),
+(45, 14, 3, '2021-12-04', '2021-12-03', 4, 6, -1),
+(46, 14, 6, '2021-12-04', '2021-12-01', 4, 6, -3);
 
 -- --------------------------------------------------------
 
@@ -169,22 +208,19 @@ CREATE TABLE `reservations` (
   `date_start` date DEFAULT NULL,
   `date_end` date DEFAULT NULL,
   `status_id` int(11) DEFAULT NULL,
-  `acception_id` int(11) DEFAULT NULL
+  `acception_id` int(11) DEFAULT NULL,
+  `days_until_detencion` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Zrzut danych tabeli `reservations`
---
-
-INSERT INTO `reservations` (`id`, `user_id`, `offer_id`, `date_start`, `date_end`, `status_id`, `acception_id`) VALUES
-(5, 14, 3, '2021-11-28', '2021-11-29', 3, NULL),
-(6, 16, 3, '2021-12-02', '2021-12-03', 3, 1);
 
 --
 -- Wyzwalacze `reservations`
 --
 DELIMITER $$
-CREATE TRIGGER `archive_reservations` BEFORE DELETE ON `reservations` FOR EACH ROW INSERT INTO archives_reservations(user_id,offer_id,date_start,date_end,status_id,acception_id) VALUES (OLD.user_id,OLD.offer_id,OLD.date_start,OLD.date_end,OLD.status_id,OLD.acception_id)
+CREATE TRIGGER `archive_reservations` BEFORE DELETE ON `reservations` FOR EACH ROW INSERT INTO archives_reservations(user_id,offer_id,date_start,date_end,status_id,acception_id,days_until_detencion) VALUES (OLD.user_id,OLD.offer_id,OLD.date_start,OLD.date_end,4,OLD.acception_id, OLD.days_until_detencion)
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `calculate_days_until_detencion` BEFORE INSERT ON `reservations` FOR EACH ROW SET NEW.days_until_detencion = NEW.date_end - CURRENT_DATE
 $$
 DELIMITER ;
 
@@ -226,7 +262,8 @@ CREATE TABLE `status` (
 INSERT INTO `status` (`id`, `status_name`) VALUES
 (1, 'available'),
 (2, 'not_available'),
-(3, 'waiting');
+(3, 'waiting'),
+(4, 'archive');
 
 -- --------------------------------------------------------
 
@@ -271,7 +308,9 @@ ALTER TABLE `acception`
 ALTER TABLE `archives_reservations`
   ADD PRIMARY KEY (`id`),
   ADD KEY `user_id` (`user_id`,`offer_id`,`status_id`),
-  ADD KEY `acception_id` (`acception_id`);
+  ADD KEY `acception_id` (`acception_id`),
+  ADD KEY `offer_id` (`offer_id`),
+  ADD KEY `status_id` (`status_id`);
 
 --
 -- Indeksy dla tabeli `body_types`
@@ -307,7 +346,8 @@ ALTER TABLE `reservations`
   ADD PRIMARY KEY (`id`),
   ADD KEY `user_id` (`user_id`,`offer_id`,`status_id`),
   ADD KEY `status_id` (`status_id`),
-  ADD KEY `offer_id` (`offer_id`);
+  ADD KEY `offer_id` (`offer_id`),
+  ADD KEY `acception_id` (`acception_id`);
 
 --
 -- Indeksy dla tabeli `roles`
@@ -336,13 +376,13 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT dla tabeli `acception`
 --
 ALTER TABLE `acception`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT dla tabeli `archives_reservations`
 --
 ALTER TABLE `archives_reservations`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
 
 --
 -- AUTO_INCREMENT dla tabeli `body_types`
@@ -372,7 +412,7 @@ ALTER TABLE `prices`
 -- AUTO_INCREMENT dla tabeli `reservations`
 --
 ALTER TABLE `reservations`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=58;
 
 --
 -- AUTO_INCREMENT dla tabeli `roles`
@@ -400,7 +440,10 @@ ALTER TABLE `users`
 -- Ograniczenia dla tabeli `archives_reservations`
 --
 ALTER TABLE `archives_reservations`
-  ADD CONSTRAINT `archives_reservations_ibfk_1` FOREIGN KEY (`acception_id`) REFERENCES `acception` (`id`);
+  ADD CONSTRAINT `archives_reservations_ibfk_1` FOREIGN KEY (`acception_id`) REFERENCES `acception` (`id`),
+  ADD CONSTRAINT `archives_reservations_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
+  ADD CONSTRAINT `archives_reservations_ibfk_3` FOREIGN KEY (`offer_id`) REFERENCES `offer` (`id`),
+  ADD CONSTRAINT `archives_reservations_ibfk_4` FOREIGN KEY (`status_id`) REFERENCES `status` (`id`);
 
 --
 -- Ograniczenia dla tabeli `offer`
@@ -416,13 +459,25 @@ ALTER TABLE `offer`
 ALTER TABLE `reservations`
   ADD CONSTRAINT `reservations_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
   ADD CONSTRAINT `reservations_ibfk_2` FOREIGN KEY (`status_id`) REFERENCES `status` (`id`),
-  ADD CONSTRAINT `reservations_ibfk_3` FOREIGN KEY (`offer_id`) REFERENCES `offer` (`id`);
+  ADD CONSTRAINT `reservations_ibfk_3` FOREIGN KEY (`offer_id`) REFERENCES `offer` (`id`),
+  ADD CONSTRAINT `reservations_ibfk_4` FOREIGN KEY (`acception_id`) REFERENCES `acception` (`id`);
 
 --
 -- Ograniczenia dla tabeli `users`
 --
 ALTER TABLE `users`
   ADD CONSTRAINT `users_ibfk_1` FOREIGN KEY (`privilege_id`) REFERENCES `roles` (`id`);
+
+DELIMITER $$
+--
+-- Zdarzenia
+--
+CREATE DEFINER=`root`@`localhost` EVENT `calculate_days_until_detencion` ON SCHEDULE EVERY 1 MINUTE STARTS '2021-12-04 21:02:32' ON COMPLETION NOT PRESERVE ENABLE DO BEGIN
+	UPDATE reservations SET reservations.days_until_detencion = reservations.date_end - CURRENT_DATE;
+    UPDATE reservations SET reservations.acception_id = IF(reservations.days_until_detencion<0,6,reservations.acception_id);
+END$$
+
+DELIMITER ;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

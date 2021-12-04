@@ -10,6 +10,12 @@ class Database{
             die("Nie można było połączyć się z bazą danych");
         }
     }
+
+    public function doesHaveAnyDetencion(int $user_id)
+    {
+        return $this->conn -> query("SELECT acception_id FROM reservations WHERE `user_id`=$user_id AND acception_id=6");
+    }
+
     public function insertUser(string $username,string $password,string $email,int $privilege):bool
     {
         if($this-> escapeChars([$username,$password,$email])){
@@ -96,6 +102,8 @@ class Database{
     {
         return $this -> conn -> query("SELECT s.status_name, r.user_id FROM reservations r INNER JOIN `status` s ON s.id=r.status_id WHERE r.offer_id = $id");
     }
+
+
     public function makeReservation(int $user_id,int $offer_id, string $date_start,string $date_end,int $status_id,int $acception_id)
     {
         if($this -> escapeChars([$date_start,$date_end])){
@@ -105,6 +113,63 @@ class Database{
             return null;
         }
     }
+
+    public function getArchiveReservationsByUserId(int $user_id)
+    {
+        return $this -> conn -> query("SELECT ar.days_until_detencion, ar.id,ar.date_start,ar.date_end,u.username,c.brand,o.model,ar.offer_id,s.status_name,a.acception_status FROM `archives_reservations` ar 
+        INNER JOIN users u ON ar.user_id = u.id INNER JOIN offer o ON o.id = ar.offer_id INNER JOIN car_brands c ON c.id = o.brand_id 
+        INNER JOIN `status` s ON s.id=ar.status_id INNER JOIN acception a ON a.id =ar.`acception_id` WHERE ar.user_id = $user_id");
+    }
+
+    public function getReservationsByUserId(int $user_id)
+    {
+        return $this -> conn -> query("SELECT ar.days_until_detencion,ar.id,ar.date_start,ar.date_end,u.username,c.brand,o.model,ar.offer_id,s.status_name,a.acception_status FROM `reservations` ar INNER JOIN users u ON ar.user_id = u.id
+        INNER JOIN offer o ON o.id = ar.offer_id INNER JOIN car_brands c ON c.id = o.brand_id INNER JOIN `status` s ON s.id=ar.status_id
+        INNER JOIN acception a ON a.id =ar.`acception_id` WHERE ar.user_id = $user_id");
+    }
+
+    public function cancelBooking(int $reservation_id)
+    {
+        $this-> conn -> query("UPDATE reservations SET acception_id=4");
+        return $this-> conn -> query("DELETE FROM reservations WHERE id=$reservation_id");
+    }
+
+    public function getArchiveReservationsByOfferId(int $offer_id)
+    {
+        return $this -> conn -> query("SELECT ar.days_until_detencion,ar.user_id, ar.id,ar.date_start,ar.date_end,u.username,c.brand,o.model,ar.offer_id,s.status_name,a.acception_status FROM `archives_reservations` ar 
+        INNER JOIN users u ON ar.user_id = u.id INNER JOIN offer o ON o.id = ar.offer_id INNER JOIN car_brands c ON c.id = o.brand_id 
+        INNER JOIN `status` s ON s.id=ar.status_id INNER JOIN acception a ON a.id =ar.`acception_id` WHERE ar.offer_id = $offer_id");
+    }
+
+    public function getReservationsByOfferId(int $offer_id)
+    {
+        return $this -> conn -> query("SELECT ar.days_until_detencion,ar.user_id,ar.id,ar.date_start,ar.date_end,u.username,c.brand,o.model,ar.offer_id,s.status_name,a.acception_status FROM `reservations` ar INNER JOIN users u ON ar.user_id = u.id
+        INNER JOIN offer o ON o.id = ar.offer_id INNER JOIN car_brands c ON c.id = o.brand_id INNER JOIN `status` s ON s.id=ar.status_id
+        INNER JOIN acception a ON a.id =ar.`acception_id` WHERE ar.offer_id = $offer_id");
+    }
+
+    public function returnCar(int $reservation_id,string $acception_status)
+    {
+        $acception_id = $acception_status =="detencion"?6:5;
+        $this -> conn -> query("UPDATE reservations SET acception_id=$acception_id WHERE id=$reservation_id");
+        return $this -> conn -> query("DELETE FROM reservations WHERE id=$reservation_id");
+    }
+
+    public function rejectOtherBooking(int $offer_id, int $user_id)
+    {
+        $this -> conn ->query("UPDATE reservations SET acception_id=3 WHERE offer_id=$offer_id AND `user_id`!=$user_id");
+        $this -> conn ->query("DELETE FROM reservations WHERE offer_id=$offer_id AND acception_id=3");
+        $this -> conn ->query("UPDATE reservations SET acception_id=2, status_id=2 WHERE offer_id=$offer_id AND `user_id`=$user_id");
+    }
+
+    public function changeDate(int $reservation_id,string $date_start, string $date_end)
+    {
+        if(!$this ->escapeChars([$date_start,$date_end])) return ;
+
+        return $this -> conn -> query("UPDATE reservations SET date_start='$date_start', date_end='$date_end' WHERE id= $reservation_id");
+
+    }
+
     public function customQuery(string $query)
     {
         return $this -> conn ->query($query);
@@ -117,7 +182,7 @@ class Database{
             }
         }
         return true;
-    }
+    }    
 
     private function hashPassword(string $password):string{
         return password_hash($password,PASSWORD_DEFAULT);

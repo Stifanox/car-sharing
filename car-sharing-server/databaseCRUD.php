@@ -84,6 +84,67 @@ switch ($action) {
             $database ->error("Couldn't make reservation");
         }
         break;
+    case "getAllReservationsByUserId":
+        $user_id = $_POST["user_id"];
+        $archive_array = $database -> getArchiveReservationsByUserId((int)$user_id);
+        $reservation_array = $database -> getReservationsByUserId((int)$user_id);
+        $merge_array = array_merge($reservation_array->fetch_all(MYSQLI_ASSOC),$archive_array->fetch_all(MYSQLI_ASSOC));
+        $database -> success($merge_array);
+        break;
+    case "cancelBooking":
+        $reservation_id = $_POST["reservation_id"];
+        $result = $database -> cancelBooking((int)$reservation_id);
+
+        if($result) $database->success("success");
+        else $database ->error("Couldn't remove reservation");
+
+        break;
+
+    case "getAllReservationsByOfferId":
+        $offer_id = $_POST["offer_id"];
+        $archive_array = $database -> getArchiveReservationsByOfferId((int)$offer_id);
+        $reservation_array = $database -> getReservationsByOfferId((int)$offer_id);
+        $merge_array = array_merge($archive_array->fetch_all(MYSQLI_ASSOC),$reservation_array->fetch_all(MYSQLI_ASSOC));
+        $database ->success($merge_array);
+        break;
+    case "returnCar":
+        $reservation_id = $_POST["reservation_id"];
+        $acception_status = $_POST["acception_status"];
+        $result = $database -> returnCar((int)$reservation_id,$acception_status);
+
+        if($result) $database ->success("success");
+        else $database ->error("Couldn't return car xd");
+        break;
+    case "acceptBooking":
+        $offer_id = $_POST["offer_id"];
+        $user_id = $_POST["user_id"];
+
+        $database -> rejectOtherBooking((int)$offer_id,(int)$user_id);
+        $database ->success("success");
+        break;
+    case "changeDate":
+        $date_start = $_POST["date_start"];
+        $date_end = $_POST["date_end"];
+        $reservation_id = $_POST["reservation_id"];
+
+        $result = $database -> changeDate($reservation_id,$date_start,$date_end);
+
+        if($result) $database -> success("success");
+        else $database -> error("Couldn't make change of date");
+        
+        break;
+    case "doesHaveDetencion":
+        $user_id = $_GET["user_id"];
+        $result = $database ->doesHaveAnyDetencion((int)$user_id);
+        $canMakeReservation = count($result ->fetch_all(MYSQLI_ASSOC)) > 0 ? "true":"false";
+        $database -> success($canMakeReservation);
+        break;
+    case "turnScheduler":
+        $type=$_GET["type"];
+        $result = $database -> customQuery("SET GLOBAL event_scheduler='$type'");
+        if($result) $database ->success("success");
+        else $database -> error("Couldn't change scheduler");
+        break;
     default:
         $database ->error("Couldn't resolve request");
         break;

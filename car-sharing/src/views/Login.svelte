@@ -1,10 +1,10 @@
 <script>
-    import Header from "./Header.svelte";
+    import Header from "../components/Header.svelte";
     const link = "http://localhost/car-sharing/login.php"
     let displayProblem = false
     function handleSubmit(e){
         const formData = new FormData(e.target)
-
+        
         fetch(link,{
             method:"POST",
             body:formData
@@ -17,6 +17,7 @@
                sessionStorage.setItem("username",res.username)
                sessionStorage.setItem("id",res.id)
                sessionStorage.setItem("privilege",res.privilege)
+               sessionStorage.setItem("detencion",res.detencion)
                location = "/#/"
            }
         })

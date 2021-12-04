@@ -1,7 +1,7 @@
 <script>
 import CardOffer from "../components/CardOffer.svelte";
 
-import Header from "./Header.svelte";
+import Header from "../components/Header.svelte";
 import ManagementPanel from "./ManagementPanel.svelte";
 
 const privilege = sessionStorage.getItem("privilege")
@@ -37,43 +37,55 @@ function filterData() {
 <main>
     <Header />
 
-    {#if privilege=="2"}
-    <div class="text-center">
-       <span class="font-bold"> <p>Witaj w wypożyczalni!</p>  Wybierz auto które chcesz wypożyczyć.</span> 
-        {#await result}
-        <div class="text-center">
-            Pobieram oferty...
-        </div>
-        {:then data} 
-        <div class="mt-4">
-            <h2 class="font-semibold">Filter</h2>
-            <form on:change={filterData}>
-                <select name="" id="sortBy">
-                <option value="horsepower">Moc</option>
-                <option value="price">Cena</option>
-            </select>
-
-            Rosnąco
-            <input type="radio" name="sort" id="ascending" checked>
-            Malejąco
-            <input type="radio" name="sort" id="">
-            </form>
-        </div>
-        
-        <div class="flex flex-wrap mt-5 ">
-            {#each filteredData as carInfo }
-            <CardOffer {carInfo}/>
-        {/each}
-        </div>
-        {/await}
-    </div>
-    {:else if privilege=="1"|| privilege =="3"}
-        <ManagementPanel privilege={privilege}/>
+    {#if sessionStorage.getItem("detencion")==="true"}
+        <p class="text-center text-red-600 font-bold">Masz przetrzymany samochód. Dopóki go nie oddasz nie możesz składać zamówień na inne samochody</p>
+        <p class="text-center text-red-600 font-bold">Jeżeli przetrzymane auto już oddasz zaloguj się ponownie</p>
     {:else}
-    Strona główna :)
+
+    {#if privilege=="2"}
+        <div class="text-center">
+        <span class="font-bold"> <p>Witaj w wypożyczalni!</p>  Wybierz auto które chcesz wypożyczyć.</span> 
+            {#await result}
+            <div class="text-center">
+                Pobieram oferty...
+            </div>
+            {:then data} 
+
+            <div class="mt-4 ">
+                <h2 class="font-semibold">Filter</h2>
+                <form on:change={filterData}>
+                    <select name="" id="sortBy">
+                    <option value="horsepower">Moc</option>
+                    <option value="price">Cena</option>
+                </select>
+
+                Rosnąco
+                <input type="radio" name="sort" id="ascending" checked>
+                Malejąco
+                <input type="radio" name="sort" id="">
+                </form>
+            </div>
+            
+            <div class="flex flex-wrap mt-5 ">
+                {#each filteredData as carInfo }
+                <CardOffer {carInfo}/>
+                {/each}
+            </div>
+            <footer class="w-screen mt-3">
+                <a href="/#/statute" class="text-center">Regulamin</a>
+            </footer>
+            {/await}
+        </div>
+        {:else if privilege=="1"|| privilege =="3"}
+            <ManagementPanel privilege={privilege}/>
+        {:else}
+        Strona główna :)
+        {/if}
     {/if}
+
 </main>
 
 <style scoped>
+
 
 </style>

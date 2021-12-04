@@ -1,6 +1,4 @@
 <script>
-	//TODO:zrobić protected route'y
-	import RouterAdmin from "svelte-spa-router"
 	import Router from "svelte-spa-router"
 	import ChangePrivilege from "./views/ChangePrivilege.svelte";
 	import Home from "./views/Home.svelte";
@@ -13,7 +11,10 @@
 	import AddToOffer from "./views/AddToOffer.svelte";
 	import MakeReservation from "./views/MakeReservation.svelte";
 	import AccessDenied from "./views/AccessDenied.svelte";
-	import ShowReservations from "./views/ShowReservations.svelte";
+	import TurnScheduler from "./views/TurnScheduler.svelte";
+	import Profile from "./views/Profile.svelte";
+	import ShowStatute from "./views/ShowStatute.svelte";
+	import AcceptReservation from "./views/AcceptReservation.svelte";
 </script>
 
 <main>
@@ -21,6 +22,7 @@
 	<Router 
 		routes={{
 			"/": Home,
+			"/profile":Profile,
             "/register":Register,
 			"/login":Login,
 			"/admin/addMod":ChangePrivilege,
@@ -28,8 +30,10 @@
 			"/admin/reservation":ManageReservations,
 			"/admin/offer/add":AddToOffer,
 			"/reservation/:id":MakeReservation,
-			"/admin/showReservations":ShowReservations,
+			"/admin/turnScheduler":TurnScheduler,
 			"/accessDenied":AccessDenied,
+			"/admin/reservation/:id":AcceptReservation,
+			"/statute":ShowStatute,
 			"*":NotFound
 		}}
 	/>

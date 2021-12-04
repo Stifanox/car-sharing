@@ -1,14 +1,10 @@
 <script>
 
     export let carInfo
-    let showTab = false
-        window.addEventListener("resize",function () {
-        document.querySelector(".background-gray-screen").style = `height: ${document.body.scrollHeight}px;`
-    })
-   
+    let showTab = false   
 </script>
 
-<div class=" card-margin border-2 rounded border-gray-400 flex tile mt-3 h-60 box-border items-center">
+<div class="card-margin border-2 rounded border-gray-400 flex tile mt-3 h-60 box-border items-center">
     <div >
         <img class="flex rounded-sm ml-1" style="width: 300px; height: 230px;"  src="/img/{carInfo.image_source}" alt="Zdjęcie samochodu">
     </div>
@@ -17,7 +13,11 @@
            <p>Moc: {carInfo.horsepower} KM</p> 
            <p>Model samochodu: {carInfo.model}</p> 
            <p>Cena: {carInfo.price} zł/dzień</p> 
-           <button on:click={()=>{showTab=true}} class="button-style text-white rounded px-1">Więcej szczegółów</button>
+           
+            <button on:click={sessionStorage.getItem("privilege")!=2 ? ()=> location=`/#/admin/reservation/${carInfo.id}` : ()=>{showTab=true}} 
+            class="button-style text-white rounded px-1">
+                {sessionStorage.getItem("id")!=2?"Zobacz rezerwacje":"Więcej szczegółów"}
+            </button>
         </div>
 </div>
 

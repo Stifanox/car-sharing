@@ -1,11 +1,15 @@
 <script>
-import CarDetail from "../components/CarDetail.svelte";
-import ReservationForm from "../components/ReservationForm.svelte";
-import Header from "./Header.svelte";
+    import CarDetail from "../components/CarDetail.svelte";
+    import ReservationForm from "../components/ReservationForm.svelte";
+    import Header from "../components/Header.svelte";
     export let params 
 
     if(!sessionStorage.getItem("privilege")){
-    location = "/#/accessDenied"
+        location = "/#/accessDenied"
+    }
+
+    if(sessionStorage.getItem("detencion")=="true"){
+        location = "/#/"
     }
 
     const link = "http://localhost/car-sharing/databaseCRUD.php"
@@ -26,7 +30,9 @@ import Header from "./Header.svelte";
     }).then(res => res.json())
 
     function getFormattedDate(date) {
-        return `${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()}`
+        const month = date.getMonth()+1 < 9 ? `0${date.getMonth()+1}`:date.getMonth()+1
+        const day = date.getDate() < 9 ? `0${date.getDate()}`:date.getDate()
+        return `${date.getFullYear()}-${month}-${day}`
     }
 
     function doReservation(event) {
@@ -42,7 +48,9 @@ import Header from "./Header.svelte";
             method:"POST",
             body:formDataReservation
         }).then(res => res.json())
-        .then(res => {})
+        .then(res => {
+            location = "/#/profile"
+        })
     }
 
     function canMakeAnotherReservation(arrayToFindUser){
@@ -70,13 +78,13 @@ import Header from "./Header.svelte";
             {:then carStatus} 
                 {#if carStatus.length==0}
                     Status: dostępny
-                    <ReservationForm on:dates={doReservation} {getFormattedDate} {date} doesMadeReservation={canMakeAnotherReservation(carStatus)}/>
+                    <ReservationForm on:dates={doReservation} {getFormattedDate} {date} doesMadeReservation={canMakeAnotherReservation(carStatus)} price={carInfo[0].price}/>
                 {:else if carStatus[0].status_name=="not_available"}
                     Status: niedostępny
                 {:else if carStatus[0].status_name=="waiting"}
                     Status: oczekujący <br>
                     Ilość osób oczekujących: {carStatus.length}
-                    <ReservationForm on:dates={doReservation} {getFormattedDate} {date} doesMadeReservation={canMakeAnotherReservation(carStatus)} />
+                    <ReservationForm on:dates={doReservation} {getFormattedDate} {date} doesMadeReservation={canMakeAnotherReservation(carStatus)} price={carInfo[0].price} />
                 {/if}
             {/await}
         </div>
